@@ -1,16 +1,21 @@
 package ru.skillbranch.devintensive.utils
 
 object Utils {
-    fun parseFullName(fullName: String?): Pair<String?, String?>{
-        val parts: List<String>? = fullName?.split(" ")
+    fun parseFullName(fullNameIn: String?): Pair<String?, String?>{
+        if (fullNameIn.isNullOrBlank())
+            return Pair("John", "Doe")
 
-        val firstName = parts?.getOrNull(0)
-        val lastName = parts?.getOrNull(1)
+        val fullName = fullNameIn.replace(" {2,}".toRegex(), " ")
+        val parts: List<String> = fullName.split(" ")
+
+        val firstName = parts.getOrNull(0)
+        val lastName = "${if (parts.getOrNull(1) !== null) parts.getOrNull(1)
+            else "Doe"}"
 
         return Pair(firstName, lastName)
     }
 
-    fun transliteration(payload: String, devider: String = " "): String {
+    fun transliteration(payload: String): String {
         val transliterationDictionary = mapOf(
             "А" to "A",
             "Б" to "B",
@@ -47,33 +52,23 @@ object Utils {
             "Я" to "JA"
         )
 
-        val fNameTmp = payload.split(" ")
+        val fNameTmp = payload.replace(" ", "").uppercase()
         val sb = StringBuilder(payload.length * 2)
 
-        fNameTmp.forEachIndexed{indexP, fName ->
-            val upper = fName.toUpperCase()
-            upper.forEachIndexed{index, chTmp ->
-                val chU = chTmp.toString()
-                var ch = ""
-                ch =
-                    if(index != 0 && transliterationDictionary[chU] != null)
-                    transliterationDictionary[chU]?.toLowerCase()?: String()
-                    else if(index == 0 && transliterationDictionary[chU] != null)
-                    transliterationDictionary[chU]?: String()
-                    else if(index != 0) chTmp.toString().toLowerCase() else chTmp.toString()
-                sb.append(ch)
-            }
-            if(indexP != fNameTmp.lastIndex) sb.append(devider)
+        fNameTmp.forEach { char ->
+            val ch: String = transliterationDictionary[char.toString()].toString()
+            sb.append(ch)
         }
-        return sb.toString()
+
+        return sb.toString().lowercase()
     }
 
     fun toInitials(firstName: String?, lastName: String?): String {
         val lastNameFirstLet = if(firstName?.trim() != "") firstName?.get(0) else null
         val firstNameFirstLet = if(lastName?.trim() != "") lastName?.get(0) else null
-        if(lastNameFirstLet != null && firstNameFirstLet != null) return "$lastNameFirstLet$firstNameFirstLet".toUpperCase()
-        else if(lastNameFirstLet != null && firstNameFirstLet == null) return "$lastNameFirstLet".toUpperCase()
-        else if(lastNameFirstLet == null && firstNameFirstLet != null) return "$firstNameFirstLet".toUpperCase()
-        else return null.toString()
+        return if(lastNameFirstLet != null && firstNameFirstLet != null) "$lastNameFirstLet$firstNameFirstLet".uppercase()
+        else if(lastNameFirstLet != null && firstNameFirstLet == null) "$lastNameFirstLet".uppercase()
+        else if(lastNameFirstLet == null && firstNameFirstLet != null) "$firstNameFirstLet".uppercase()
+        else null.toString()
     }
 }

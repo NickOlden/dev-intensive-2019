@@ -4,28 +4,37 @@ import ru.skillbranch.devintensive.utils.Utils
 import java.util.*
 
 data class User(
-    val id: String,
+    val id: Long,
     var firstName: String?,
     var lastName: String?,
     var avatar: String?,
     var rating: Int = 0,
     var respect: Int = 0,
-    val lastVisit: Date? = null,
-    val isOnline: Boolean = false
+    var lastVisit: Date? = null,
+    val isOnline: Boolean = false,
 ) {
 
-    constructor(id: String, firstName: String?, lastName: String?) : this (id = id, firstName = firstName, lastName = lastName, avatar = null)
+    constructor(id: Long, firstName: String?, lastName: String?) : this (
+            id = id,
+            firstName = firstName,
+            lastName = lastName,
+            avatar = null)
 
-    constructor(id: String): this(id, "John", "Snow $id")
+    constructor(id: Long): this(
+            id,
+            "John",
+            "Snow $id")
 
 
 
     init {
-        println("${if(firstName === "Margery") "Hello, Margery " else "It is a $firstName $lastName!!!"}\n")
+        val introBit = "$firstName $lastName!!!"
+        println("${if(firstName === "Margery") 
+            "Hello, Margery " else "It is a $introBit"}\n")
     }
 
     data class Builder(
-        var id: String,
+        var id: Long,
         var firstName: String?,
         var lastName: String?,
         var avatar: String?,
@@ -34,23 +43,23 @@ data class User(
         var lastVisit: Date? = null,
         var isOnline: Boolean = false){
 
-        fun id(bread: String) = apply { this.id = id}
+        fun id(id: Long) = apply { this.id = id}
         fun firstName(firstName: String) = apply { this.firstName = firstName }
         fun lastName(lastName: String) = apply { this.lastName = lastName }
         fun avatar(avatar: String) = apply { this.avatar = avatar }
         fun rating(rating: Int) = apply { this.rating = rating }
         fun respect(respect: Int) = apply { this.respect = respect }
         fun lastVisit(lastVisit: Date) = apply { this.lastVisit = lastVisit }
-        fun isOnline(lastVisit: Boolean) = apply { this.isOnline = isOnline }
+        fun isOnline(isOnline: Boolean) = apply { this.isOnline = isOnline }
         fun build() = User(id, firstName, lastName, avatar, rating, respect, lastVisit, isOnline)
     }
 
     companion object Factory {
-        private var lastId: Int = -1
+        private var lastId: Long = -1L
         fun makeUser(fullName: String?) : User{
             lastId++
             val (firstName, lastName) = Utils.parseFullName(fullName)
-            return User(id = "$lastId", firstName = firstName,lastName = lastName)
+            return User(id = lastId, firstName = firstName,lastName = lastName)
         }
     }
 

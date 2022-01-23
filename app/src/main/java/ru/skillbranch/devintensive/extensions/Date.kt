@@ -25,12 +25,12 @@ fun Date.add(value: Int, units: TimeUnits = TimeUnits.SECOND): Date {
         TimeUnits.HOUR -> value * HOUR
         TimeUnits.DAY -> value * DAY
     }
-     this.time = time
+    this.time = time
     return this
 }
 
 @SuppressLint("SimpleDateFormat")
-public fun Date.humanizeDiff(date: Date = Date()): String {
+fun Date.humanizeDiff(date: Date = Date()): String {
     val timestamp = System.currentTimeMillis()
     val lastVisitTimestamp = date.time
     val differenceTimestamp = timestamp - lastVisitTimestamp
