@@ -25,8 +25,6 @@ data class User(
             "John",
             "Snow $id")
 
-
-
     init {
         val introBit = "$firstName $lastName!!!"
         println("${if(firstName === "Margery") 
