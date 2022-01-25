@@ -11,8 +11,7 @@ data class User(
     var rating: Int = 0,
     var respect: Int = 0,
     var lastVisit: Date? = null,
-    val isOnline: Boolean = false,
-) {
+    val isOnline: Boolean = false) {
 
     constructor(id: Long, firstName: String?, lastName: String?) : this (
             id = id,
@@ -32,10 +31,10 @@ data class User(
     }
 
     data class Builder(
-        var id: Long,
-        var firstName: String?,
-        var lastName: String?,
-        var avatar: String?,
+        var id: Long = 1L,
+        var firstName: String? = null,
+        var lastName: String? = null,
+        var avatar: String? = null,
         var rating: Int = 0,
         var respect: Int = 0,
         var lastVisit: Date? = null,
