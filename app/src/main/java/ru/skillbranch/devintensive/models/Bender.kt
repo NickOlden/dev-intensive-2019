@@ -15,12 +15,12 @@ class Bender(var status: Status = Status.NORMAL, var question: Question = Questi
         return if (question.answer.contains(answer)) {
             question = question.nextQuestion()
              """Отлично! Это правильный ответ.
-                ${question.question}
+${question.question}
              """.trimMargin() to status.color
         } else {
             status = status.nextStatus()
-            """Это не правильный ответ.
-               ${question.question}
+            """Это неправильный ответ.
+${question.question}
             """.trimMargin() to status.color
         }
     }
@@ -53,10 +53,10 @@ class Bender(var status: Status = Status.NORMAL, var question: Question = Questi
         B_DAY("Когда меня сделали?", listOf("2993")) {
             override fun nextQuestion(): Question = SERIAL
         },
-        SERIAL("Когда меня сделали?", listOf("2716057")) {
+        SERIAL("Какой мой порядковый номер?", listOf("2716057")) {
             override fun nextQuestion(): Question = IDLE
         },
-        IDLE("На этом все, вопросов больше нет?", listOf()) {
+        IDLE("На этом все, вопросов больше нет", listOf()) {
             override fun nextQuestion(): Question = NAME
         };
 
