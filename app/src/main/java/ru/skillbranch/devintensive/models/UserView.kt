@@ -1,7 +1,7 @@
 package ru.skillbranch.devintensive.models
 
 class UserView(
-    val id: Long,
+    val id: String,
     val fullName: String,
     val nickName: String,
     var avatar: String? = null,

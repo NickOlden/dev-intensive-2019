@@ -9,6 +9,7 @@ const val SECOND = 1000L
 const val MINUTE = 60 * SECOND
 const val HOUR = 60 * MINUTE
 const val DAY = 24 * HOUR
+const val WEEK = 7 * DAY
 
 
 fun Date.format(pattern: String="HH:mm:ss dd.MM.yy"): String{
@@ -17,15 +18,12 @@ fun Date.format(pattern: String="HH:mm:ss dd.MM.yy"): String{
 }
 
 fun Date.add(value: Int = 0, units: TimeUnits = TimeUnits.SECOND): Date {
-    var time = this.time
-
-    time += when(units) {
+    this.time += when(units) {
         TimeUnits.SECOND -> value * SECOND
         TimeUnits.MINUTE -> value * MINUTE
         TimeUnits.HOUR -> value * HOUR
         TimeUnits.DAY -> value * DAY
     }
-    this.time = time
 
     return this
 }
@@ -36,38 +34,44 @@ fun Date.humanizeDiff(): String {
     val lastVisitTimestamp = this.time
     val differenceTimestamp = timestamp - lastVisitTimestamp
 
-    return if (differenceTimestamp in 1..59000) {
-        val seconds = SimpleDateFormat("ss").format(differenceTimestamp)
-        "${pluralCalc(seconds.toInt(), "секунду", "секунды", "секунд")} назад"
+    return if (differenceTimestamp in 1000 until MINUTE) {
+        "${pluralCalc((abs(differenceTimestamp) / SECOND).toInt(), 
+            "секунду", "секунды", "секунд")} назад"
     }
-    else if (differenceTimestamp in 60000..3599000) {
-        val minutes = SimpleDateFormat("mm").format(differenceTimestamp)
-        "${pluralCalc(minutes.toInt(), "минуту", "минуты", "минут")} назад"
+    else if (differenceTimestamp in MINUTE until HOUR) {
+        "${pluralCalc((abs(differenceTimestamp) / MINUTE).toInt(), 
+            "минуту", "минуты", "минут")} назад"
     }
-    else if (differenceTimestamp in 3600000..86399000) {
-        val hours = SimpleDateFormat("HH").format(differenceTimestamp)
-        "${pluralCalc(hours.toInt(), "час", "часа", "часов")} назад"
+    else if (differenceTimestamp in HOUR until DAY) {
+        "${pluralCalc((abs(differenceTimestamp) / HOUR).toInt(), 
+            "час", "часа", "часов")} назад"
     }
-    else if (differenceTimestamp in 86399000..604799999) "на этой неделе"
-    else if (differenceTimestamp in 604800000..2419199999) "более недели назад"
+    else if (differenceTimestamp in DAY until WEEK) {
+        "${pluralCalc((abs(differenceTimestamp) / DAY).toInt(),
+            "день", "дня", "дней")} назад"
+    }
+    else if (differenceTimestamp in WEEK..2419199999) "более недели назад"
     else if (differenceTimestamp in 2419200000..31691519999) "более месяца назад"
     else if (differenceTimestamp > 31691520000) "более года назад"
-    else if (differenceTimestamp in -59000..-1) {
-        val seconds = SimpleDateFormat("ss").format(differenceTimestamp)
-        "через ${pluralCalc(seconds.toInt(), "секунду", "секунды", "секунд")}"
+    else if (differenceTimestamp in -MINUTE..-1000) {
+        "через ${pluralCalc((abs(differenceTimestamp) / SECOND).toInt(), 
+            "секунду", "секунды", "секунд")}"
     }
-    else if (differenceTimestamp in -3599000..-60000) {
-        val minutes = SimpleDateFormat("mm").format(differenceTimestamp)
-        "через ${pluralCalc(minutes.toInt(), "минуту", "минуты", "минут")}"
+    else if (differenceTimestamp in -HOUR..-MINUTE) {
+        "через ${pluralCalc((abs(differenceTimestamp) / MINUTE).toInt(), 
+            "минуту", "минуты", "минут")}"
     }
-    else if (differenceTimestamp in -86399000..-3600000) {
-        val hours = SimpleDateFormat("HH").format(differenceTimestamp)
-        "через ${pluralCalc(hours.toInt(), "час", "часа", "часов")}"
+    else if (differenceTimestamp in -DAY..-HOUR) {
+        "через ${pluralCalc((abs(differenceTimestamp) / HOUR).toInt(), 
+            "час", "часа", "часов")}"
     }
-    else if (differenceTimestamp in -604799999..-86399000) "на этой неделе"
+    else if (differenceTimestamp in -WEEK..-DAY) {
+        "через ${pluralCalc((abs(differenceTimestamp) / DAY).toInt(),
+            "день", "дня", "дней")}"
+    }
     else if (differenceTimestamp in -2419199999..-604800000) "более, чем через неделю"
-    else if (differenceTimestamp in -31691519999..-2419200000) "более, чем через месяц"
-    else if (differenceTimestamp < -31691520000) "более, чем через год"
+    else if (differenceTimestamp in -31691519999..-2419200000) "более чем через месяц"
+    else if (differenceTimestamp < -31691520000) "более чем через год"
     else "только что"
 }
 
