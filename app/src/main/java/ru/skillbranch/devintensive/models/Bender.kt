@@ -14,14 +14,18 @@ class Bender(var status: Status = Status.NORMAL, var question: Question = Questi
     fun listenAnswer(answer: String) : Pair<String, Triple<Int, Int, Int>> {
         return if (question.answer.contains(answer)) {
             question = question.nextQuestion()
-             """Отлично! Это правильный ответ.
-${question.question}
-             """.trimMargin() to status.color
+            "Отлично - ты справился\n${question.question}" to status.color
         } else {
             status = status.nextStatus()
-            """Это неправильный ответ.
-${question.question}
-            """.trimMargin() to status.color
+            val badAnswer = "Это неправильный ответ"
+            var gameOverPhrase = ""
+            if (status == Status.NORMAL) {
+                gameOverPhrase = ". Давай все по новой"
+                question = Question.NAME
+                status = Status.NORMAL
+            }
+            val badResult = "$badAnswer$gameOverPhrase"
+            "$badResult\n${question.question}" to status.color
         }
     }
 
@@ -29,7 +33,7 @@ ${question.question}
         NORMAL(Triple(255, 255, 255)),
         WARNING(Triple(255, 120, 0)),
         DANGER(Triple(255, 60, 60)),
-        CRITICAL(Triple(255, 255, 0));
+        CRITICAL(Triple(255, 0, 0));
 
         fun nextStatus(): Status {
             return  if(this.ordinal < values().lastIndex) {
